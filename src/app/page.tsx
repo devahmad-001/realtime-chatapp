@@ -1,5 +1,5 @@
 "use client";
-import { AuthContext } from "@/components/authcontext/AuthContext";
+import { AuthContext } from "@/components/Context/AuthContext";
 import Homepage from "@/components/homepage/homepage/Homepage";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";

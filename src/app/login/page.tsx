@@ -11,7 +11,7 @@ function Login() {
   let { register, handleSubmit } = useForm();
   const Nevigate = useRouter();
 
-  const formdata = async (data: any) => {
+  const SignIN = async (data: any) => {
     try {
       signInWithEmailAndPassword(Auth, data.email, data.password)
         .then((userCredential) => {
@@ -20,8 +20,6 @@ function Login() {
           if (user) {
             Nevigate.push("/");
           }
-
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -38,7 +36,7 @@ function Login() {
       <div className="forwrapper">
         <span className="logo">Logo</span>
         <span className="tite">Sign In</span>
-        <form action="" onSubmit={handleSubmit(formdata)}>
+        <form action="" onSubmit={handleSubmit(SignIN)}>
           <input
             {...register("email")}
             type="email"

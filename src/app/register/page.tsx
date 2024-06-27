@@ -15,7 +15,7 @@ export default function Register() {
 
   const router = useRouter();
 
-  const formdata = async (data: any) => {
+  const RegisterUser = async (data: any) => {
     //Password require atleast 6 characters for POST Request
     try {
       // authentication
@@ -78,7 +78,7 @@ export default function Register() {
       <div className="forwrapper">
         <span className="logo">Logo</span>
         <span className="tite">Register</span>
-        <form action="" onSubmit={handleSubmit(formdata)}>
+        <form action="" onSubmit={handleSubmit(RegisterUser)}>
           <input
             {...register("name")}
             type="text"
@@ -112,7 +112,9 @@ export default function Register() {
           <button>Sign up</button>
         </form>
         {Err && <span>Something went wrong</span>}
-        <p>Do you have an account? <Link href={'/login'}>Login</Link></p>
+        <p>
+          Do you have an account? <Link href={"/login"}>Login</Link>
+        </p>
       </div>
     </div>
   );
