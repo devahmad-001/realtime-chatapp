@@ -16,13 +16,15 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { ChatContext } from "@/components/Context/ChatContext";
 export default function Homepage() {
   const [users, setusers] = useState<any[]>([]);
   const [username, setusername] = useState<string>("");
   const [Err, setErr] = useState<boolean>(false);
   const [chats, setchats] = useState([{}]);
-
+  const [handleSelectedUser, sethandleSelectedUser] = useState([{}]);
   const { currentUser }: any = useContext(AuthContext);
+  const { dispatch, data }: any = useContext(ChatContext);
   const NevigateToLoginPage = useRouter();
 
   useEffect(() => {
@@ -30,19 +32,17 @@ export default function Homepage() {
       const unsubscribe = onSnapshot(
         doc(db, "chatroom", currentUser.uid),
         (snapshot) => {
-          console.log("Current data: ", snapshot.data());
-          setchats(snapshot.data()); // Update chats state with snapshot data
+          snapshot && console.log("Current data: ", snapshot.data());
+          setchats(snapshot.data());
+          // Update chats state with snapshot data
         }
       );
       return () => {
-        unsubscribe(); // Unsubscribe from snapshot listener when component unmounts
+        unsubscribe(); // Unsubscribe from snapshot listener when component unmountsFFFF
       };
     };
     currentUser.uid && GetChats();
   }, [currentUser?.uid]); // Dependency array ensures useEffect runs when currentUser.uid changes
-
-  console.log(chats, Object.entries(chats));
-
   const ConnectiveUserName = (evt: any) => {
     setusername(evt.target.value);
   };
@@ -64,7 +64,6 @@ export default function Homepage() {
       setErr(true);
     }
   };
-
   const Logout = () => {
     signOut(Auth)
       .then(() => {
@@ -74,8 +73,9 @@ export default function Homepage() {
         console.log(error, " : error is occured in the Logout function");
       });
   };
-
   const ConnectUser = async (userdetails: any, index: any) => {
+    // for dispatch
+    chats && handleSelect();
     // check whether the group (chat in firestore) exists
     // if not created
     const combinedID =
@@ -106,8 +106,22 @@ export default function Homepage() {
     } catch (error) {
       console.log(error);
     }
+
     // users.splice(index, 1);
     // setusers([...users]);
+  };
+
+  // handleSelect function on the Object.entries.map > div
+
+  const handleSelect = async () => {
+    Object.entries(chats).map((chat: any) => {
+      console.log(chat, "Handle Select users");
+      sethandleSelectedUser(chat);
+      console.log(chat);
+    });
+    console.log(chats);
+    dispatch({ type: "CHANGE_USER", payload: handleSelectedUser });
+    const providerdata = await data;
   };
 
   return (
@@ -252,39 +266,43 @@ export default function Homepage() {
               <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
                 <div className="flex flex-col h-full overflow-x-auto mb-4">
                   <div className="flex flex-col h-full">
-                    {Object.entries(chats)?.map((chat, index) => {
-                      return (
-                        <div className="grid grid-cols-12 gap-y-2" key={index}>
-                          {/* Recieve Meg */}
-                          <div className="col-start-1 col-end-8 p-3 rounded-lg">
-                            <div className="flex flex-row items-center">
-                              <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                A
-                              </div>
-                              <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                                <div>Hey How are you today?</div>
-                              </div>
-                            </div>
+                    {/* {Object.entries(chats)?.map((chat, index) => { */}
+                    {/* return ( */}
+                    <div className="grid grid-cols-12 gap-y-2">
+                      {/* <div className="grid grid-cols-12 gap-y-2" key={index}> */}
+                      {/* Recieve Meg */}
+                      <div className="col-start-1 col-end-8 p-3 rounded-lg">
+                        <div className="flex flex-row items-center">
+                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                            F
                           </div>
-                          {/* Send Msg */}
-                          <div className="col-start-6 col-end-13 p-3 rounded-lg">
-                            <div className="flex items-center justify-start flex-row-reverse">
-                              <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                A
-                              </div>
-                              <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                                <div>I'm ok what about you?</div>
-                              </div>
-                            </div>
+                          <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
+                            {data.user?.name}
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                      {/* Send Msg */}
+                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
+                        <div className="flex items-center justify-start flex-row-reverse">
+                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                            A
+                          </div>
+                          <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                            <div>I am ok what about you?</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* );
+                    })} */}
                   </div>
                 </div>
                 <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
                   <div>
-                    <button className="flex items-center justify-center text-gray-400 hover:text-gray-600">
+                    <button
+                      title="filebtn"
+                      className="flex items-center justify-center text-gray-400 hover:text-gray-600"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -304,10 +322,14 @@ export default function Homepage() {
                   <div className="flex-grow ml-4">
                     <div className="relative w-full">
                       <input
+                        title="text"
                         type="text"
                         className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                       />
-                      <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
+                      <button
+                        title="filebtn"
+                        className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
+                      >
                         <svg
                           className="w-6 h-6"
                           fill="none"
