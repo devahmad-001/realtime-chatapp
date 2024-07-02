@@ -1,7 +1,31 @@
 "use client";
+import { db } from "@/firebase";
 import styled from "@emotion/styled";
-import React from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "./Context/AuthContext";
 export default function Chats() {
+  let { currentUser }: any = useContext(AuthContext);
+
+  const [chats, setchats] = useState([]);
+
+  useEffect(() => {
+    const getChats = () => {
+      const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+        console.log("Chats data: ", doc.data());
+        // @ts-ignore
+        setchats(doc.data());
+        return () => {
+          unsub();
+        };
+      });
+    };
+
+    currentUser.uid && getChats();
+  }, [currentUser.uid]);
+
+  console.log(Object.entries(chats));
+
   const Chats = styled.div``;
   const Userchat = styled.div`
     display: flex;
@@ -33,15 +57,23 @@ export default function Chats() {
   `;
 
   return (
-    <Chats>
-      <Userchat>
-        <UserImg src={"imgs/avatar.png"} />
-        <UserChatInfo />
-        <DisplayName>
-          Jane
-          <LastMsg>Hello!</LastMsg>
-        </DisplayName>
-      </Userchat>
-    </Chats>
+    <>
+      {Object.entries(chats).map((chat) => {
+        // console.log(chat[1].userInfo);
+        <Chats key={chat[0]}>
+          <Userchat>
+              {/* @ts-ignore */}
+            <UserImg src={chat[1].userInfo.avatar} />
+            <UserChatInfo />
+            <DisplayName>
+              {/* @ts-ignore */}
+              {chat[1].userInfo.name}
+              {/* @ts-ignore */}
+              <LastMsg>Hello!</LastMsg>
+            </DisplayName>
+          </Userchat>
+        </Chats>;
+      })}
+    </>
   );
 }

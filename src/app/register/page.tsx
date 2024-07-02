@@ -11,7 +11,7 @@ import Link from "next/link";
 export default function Register() {
   let { register, handleSubmit } = useForm();
 
-  const [Err, setErr] = useState<boolean>(false);
+  const [err, seterr] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -25,6 +25,9 @@ export default function Register() {
         data.password
       );
 
+      console.log("Current User Login :",response);
+      
+
       // upload files
 
       const res = ref(storage, data.name);
@@ -35,12 +38,11 @@ export default function Register() {
         "state_changed",
         (snapshot) => {
           // Handle progress
-          console.log(snapshot.bytesTransferred, snapshot.totalBytes);
         },
         (error) => {
           // Handle errors
           console.error("Error in upload:", error);
-          setErr(true);
+          seterr(true);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref)
@@ -57,19 +59,19 @@ export default function Register() {
                 id: response.user.uid,
                 avatar: downloadURL,
               });
-              await setDoc(doc(db, "chatroom", response.user.uid), {});
+              await setDoc(doc(db, "userChats", response.user.uid), {});
               // After register nevigate to the homepage
               router.push("/");
             })
             .catch((error) => {
               console.error("Error getting download URL:", error);
-              setErr(true);
+              seterr(true);
             });
         }
       );
     } catch (error) {
       console.log(error);
-      setErr(true);
+      seterr(true);
     }
   };
 
@@ -111,7 +113,7 @@ export default function Register() {
           </label>
           <button>Sign up</button>
         </form>
-        {Err && <span>Something went wrong</span>}
+        {err && <span>Something went wrong</span>}
         <p>
           Do you have an account? <Link href={"/login"}>Login</Link>
         </p>

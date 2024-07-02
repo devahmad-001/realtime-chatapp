@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function Login() {
-  const [Err, setErr] = useState<boolean>(false);
+  const [err, seterr] = useState<boolean>(false);
   let { register, handleSubmit } = useForm();
   const Nevigate = useRouter();
 
@@ -24,11 +24,11 @@ function Login() {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErr(true);
+          seterr(true);
         });
     } catch (error) {
       console.log(error);
-      setErr(true);
+      seterr(true);
     }
   };
   return (
@@ -51,7 +51,7 @@ function Login() {
           />
           <button>Sign in </button>
         </form>
-        {Err && <span>Something went wrong</span>}
+        {err && <span>Something went wrong</span>}
         <p>
           You Dont have an account?<Link href={"/register"}> Register</Link>
         </p>

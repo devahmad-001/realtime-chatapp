@@ -69,6 +69,29 @@ label {
   cursor: pointer;
 }
 
+/* @mixin mobile {
+  @media screen and (max-width: 480px){
+     @content;
+  }
+} */
+
+/* @mixin tablet {
+  @media screen and (max-width: 768px){
+     @content;
+  }
+} */
+/* @mixin laptop {
+  @media screen and (max-width: 1200px){
+     @content;
+  }
+} */
+
+/* Logo Navbar */
+
+.Logo{
+  font-weight: bold;
+}
+
 /* Emoji Input  */
 
 .Input {

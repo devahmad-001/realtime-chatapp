@@ -1,7 +1,15 @@
 "use client";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { Auth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { AuthContext } from "./Context/AuthContext";
 export default function Navbar() {
+  const { currentUser }:any = useContext(AuthContext);
+
+  const NevigateToLoginPage = useRouter();
+
   const Navbar = styled.div`
     display: flex;
     align-items: center;
@@ -13,6 +21,9 @@ export default function Navbar() {
   `;
   const Logo = styled.span`
     font-weight: bold;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
   `;
   const User = styled.div`
     display: flex;
@@ -27,14 +38,25 @@ export default function Navbar() {
     object-fit: cover;
   `;
   const Name = styled.span``;
+
+  const Logout = () => {
+    signOut(Auth)
+      .then(() => {
+        NevigateToLoginPage.push("/login");
+      })
+      .catch((error) => {
+        console.log(error, " : error is occured in the Logout function");
+      });
+  };
+
   return (
     <Navbar>
       <Logo>Lama chat</Logo>
       <User>
-        <Img src={"imgs/avatar.png"} />
-        <Name>Farhan Ahmad</Name>
+        <Img src={currentUser.photoURL} />
+        <Name>{currentUser.displayName}</Name>
         {/* Logout Btn */}
-        <label className="switch">
+        <label className="switch" onClick={Logout}>
           <input defaultChecked type="checkbox" />
           <div className="slider">
             <div className="circle">

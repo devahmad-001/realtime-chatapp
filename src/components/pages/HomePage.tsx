@@ -10,7 +10,6 @@ export default function HomePage() {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* flex-wrap: wrap; */
   `;
   const Container = styled.div`
     border: 1px solid white;
@@ -19,6 +18,9 @@ export default function HomePage() {
     height: 90%;
     display: flex;
     overflow: hidden;
+    @media screen and (max-width: 768px) {
+      width: 90%;
+    }
   `;
   return (
     <HomePage>
