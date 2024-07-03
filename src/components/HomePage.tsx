@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import Sidebar from "../Sidebar";
-import Chat from "../Chat";
+import Sidebar from "./Sidebar";
+import Chat from "./Chat";
 import styled from "@emotion/styled";
 export default function HomePage() {
   const HomePage = styled.div`

@@ -6,7 +6,7 @@ import { Auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { AuthContext } from "./Context/AuthContext";
 export default function Navbar() {
-  const { currentUser }:any = useContext(AuthContext);
+  const { currentUser }: any = useContext(AuthContext);
 
   const NevigateToLoginPage = useRouter();
 
@@ -45,7 +45,10 @@ export default function Navbar() {
         NevigateToLoginPage.push("/login");
       })
       .catch((error) => {
-        console.log(error, " : error is occured in the Logout function");
+        console.log(
+          error,
+          " : error is occured in the Logout function ___ Navbar"
+        );
       });
   };
 
@@ -57,12 +60,13 @@ export default function Navbar() {
         <Name>{currentUser.displayName}</Name>
         {/* Logout Btn */}
         <label className="switch" onClick={Logout}>
-          <input defaultChecked type="checkbox" />
+          <input title="Logout" defaultChecked type="checkbox" />
           <div className="slider">
             <div className="circle">
               <svg
                 className="cross"
                 xmlSpace="preserve"
+                // @ts-ignore
                 style={{ enableBackground: "new 0 0 512 512" }}
                 viewBox="0 0 365.696 365.696"
                 y={0}
@@ -84,6 +88,7 @@ export default function Navbar() {
               <svg
                 className="checkmark"
                 xmlSpace="preserve"
+                // @ts-ignore
                 style={{ enableBackground: "new 0 0 512 512" }}
                 viewBox="0 0 24 24"
                 y={0}
@@ -96,6 +101,7 @@ export default function Navbar() {
               >
                 <g>
                   <path
+                    // @ts-ignore
                     className
                     data-original="#000000"
                     fill="currentColor"

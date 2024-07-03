@@ -1,6 +1,6 @@
 "use client";
 import { AuthContext } from "@/components/Context/AuthContext";
-import HomePage from '@/components/pages/HomePage'
+import HomePage from '@/components/HomePage'
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 

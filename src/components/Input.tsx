@@ -1,10 +1,23 @@
 "use client";
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Picker, { Emoji } from "emoji-picker-react";
-
+import { AuthContext } from "./Context/AuthContext";
+import { ChatContext } from "./Context/ChatContext";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  Timestamp,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db, storage } from "@/firebase";
+import { v4 as uuidv4, v4 } from "uuid";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { updateProfile } from "firebase/auth";
 // Html
-
 const InputBox = styled.div`
   height: 60px;
   background-color: #f5f5f5de;
@@ -13,7 +26,14 @@ const InputBox = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
-const TypeText = styled.div`
+const InputText = styled.input`
+  justify-self: flex-start;
+  border: none;
+  outline: none;
+  background: transparent;
+  margin-left: 10px;
+`;
+const TextFeild = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -47,19 +67,114 @@ const Label = styled.label``;
 export default function Input() {
   const [inputStr, setInputStr] = useState("");
   const [showPicker, setShowPicker] = useState(false);
+  const [text, setText] = useState("");
+  const [img, setImg] = useState(null);
+  const [err, setErr] = useState(false);
+  const { currentUser }: any = useContext(AuthContext);
+  const { data }: any = useContext(ChatContext);
 
   const onEmojiClick = (event: any, emojiObject: any) => {
+    setText(event.emoji);
     setInputStr((prevInput) => prevInput + event.emoji);
     setShowPicker(false);
   };
 
   const handleChange = (e: any) => {
-    setInputStr(e.target.value);
+    let input = e.target.value;
+    setInputStr(input);
+    setText(input);
+  };
+
+  const handleSend = async () => {
+    if (img) {
+      const res = ref(storage, uuidv4());
+      //  @ts-ignore
+      const uploadTask = uploadBytesResumable(res, img);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Handle progress
+        },
+        (error) => {
+          // Handle errors
+          console.error(
+            "Error in uploadimg handleSend function Input.tsx :",
+            error
+          );
+          setErr(true);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then(async (downloadURL) => {
+              const washingtonRef = doc(db, "chats", data.chatID);
+              await updateDoc(washingtonRef, {
+                messages: arrayUnion({
+                  senderID: currentUser.uid,
+                  text,
+                  date: Timestamp.now(),
+                  id: uuidv4(),
+                  img: downloadURL,
+                }),
+              });
+            })
+            .catch((error) => {
+              console.error(
+                "Error getting download URL  handleSend function Input.tsx ::",
+                error
+              );
+              setErr(true);
+            });
+        }
+      );
+    } else if (text) {
+      const washingtonRef = doc(db, "chats", data.chatID);
+      await updateDoc(washingtonRef, {
+        messages: arrayUnion({
+          senderID: currentUser.uid,
+          text,
+          date: Timestamp.now(),
+          id: uuidv4(),
+        }),
+      });
+
+      // update last message in userChats for current user and chatID
+      const docRefCurrentUser = doc(db, "userChats", currentUser.uid);
+      await updateDoc(docRefCurrentUser, {
+        [data.chatID + ".lastMessage"]: {
+          text,
+        },
+        [data.chatID + ".date"]: serverTimestamp(),
+      });
+
+      const docRefConnectedUser = doc(db, "userChats", data.user.id);
+      await updateDoc(docRefConnectedUser, {
+        [data.chatID + ".lastMessage"]: {
+          text,
+        },
+        [data.chatID + ".date"]: serverTimestamp(),
+      });
+    } else if (!text || img) {
+      alert("Type somthing...");
+    }
+
+    // @ts-ignore
+    setImg(null);
+    setText("");
+    setInputStr("");
   };
 
   return (
     <InputBox>
-      <TypeText>
+      <TextFeild>
+        <InputText
+          className="Input"
+          value={inputStr}
+          onChange={handleChange}
+          placeholder="Type something..."
+        />
+      </TextFeild>
+      <SendBox>
+        {/* Emogi */}
         <Label>
           <IconEmoji
             src={"/imgs/emoji.png"}
@@ -69,20 +184,28 @@ export default function Input() {
         {showPicker && (
           <Picker style={{ width: "100%" }} onEmojiClick={onEmojiClick} />
         )}
-        <input
-          className="Input"
-          value={inputStr}
-          onChange={handleChange}
-          placeholder="Type something..."
-        />
-      </TypeText>
-      <SendBox>
-        <Icon src={"imgs/attach.png"} />
-        <InputFile type="file" />
+        {/* Files */}
         <Label>
-          <Icon src={"imgs/addimg.png"} />
+          <InputFile
+            type="file"
+            onChange={(evt: any) => {
+              console.log(evt.target.files[0], "File");
+              setImg(evt.target.files[0]);
+            }}
+          />
+          <Icon src={"imgs/attach.png"} />
         </Label>
-        <Icon src={"imgs/send.png"} />
+        {/* Img */}
+        {/* <Label>
+          <InputFile
+            type="file"
+            onChange={(evt: any) => {
+              setImg(evt.target.files[0]);
+            }}
+          />
+          <Icon src={"imgs/addimg.png"} />
+        </Label> */}
+        <Icon src={"imgs/send.png"} onClick={handleSend} />
       </SendBox>
     </InputBox>
   );

@@ -10,11 +10,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 export default function Register() {
   let { register, handleSubmit } = useForm();
-
   const [err, seterr] = useState<boolean>(false);
-
   const router = useRouter();
-
   const RegisterUser = async (data: any) => {
     //Password require atleast 6 characters for POST Request
     try {
@@ -24,9 +21,7 @@ export default function Register() {
         data.email,
         data.password
       );
-
-      console.log("Current User Login :",response);
-      
+      console.log("Current User Login __Register.tsx:", response);
 
       // upload files
 
@@ -41,7 +36,7 @@ export default function Register() {
         },
         (error) => {
           // Handle errors
-          console.error("Error in upload:", error);
+          console.error("Error in upload ___Register.tsx:", error);
           seterr(true);
         },
         () => {
@@ -64,13 +59,16 @@ export default function Register() {
               router.push("/");
             })
             .catch((error) => {
-              console.error("Error getting download URL:", error);
+              console.error(
+                "Error getting download URL ___Register.tsx:",
+                error
+              );
               seterr(true);
             });
         }
       );
     } catch (error) {
-      console.log(error);
+      console.log(error, "__Register.tsx");
       seterr(true);
     }
   };

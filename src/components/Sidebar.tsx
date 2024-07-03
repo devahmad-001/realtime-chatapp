@@ -14,8 +14,8 @@ export default function Sidebar() {
   return (
     <Sidebar>
       <Navbar />
-      <Search/>
-      <Chats/>
+      <Search />
+      <Chats />
     </Sidebar>
   );
 }

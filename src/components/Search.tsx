@@ -66,10 +66,9 @@ function Search() {
       const q = query(citiesRef, where("name", "==", userName));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        console.log("Searched User :", doc.data());
+        console.log("Searched User HandleSearch Search.tsx :", doc.data());
         // @ts-ignore
         setuser({ ...doc.data() });
-        console.log(user);
       });
     } catch (error) {
       seterr(true);
@@ -94,7 +93,7 @@ function Search() {
     try {
       const chatRef = doc(db, "chats", combinedID);
       const res = await getDoc(chatRef);
-      console.log("Response from the chatRef  :", res);
+      // console.log("Response from the chatRef  :", res);
       if (!res.exists()) {
         // create new chatroom for users
         await setDoc(doc(db, "chats", combinedID), {

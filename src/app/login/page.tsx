@@ -27,7 +27,7 @@ function Login() {
           seterr(true);
         });
     } catch (error) {
-      console.log(error);
+      console.log(error," ____Login.tsx");
       seterr(true);
     }
   };
