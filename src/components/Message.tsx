@@ -63,7 +63,7 @@ export default function Message({ message }: any) {
   const ref = useRef();
   useEffect(() => {
     // @ts-ignore
-    ref.current.scrollIntoView({ behavior: "smooth" });
+    ref.current.scrollIntoView({ behaviour: "smooth" });
   }, [message]);
 
   return (
