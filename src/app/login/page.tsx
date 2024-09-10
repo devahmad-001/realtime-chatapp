@@ -5,7 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Auth } from "@/firebase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { ToastContainer, toast } from 'react-toastify';
 function Login() {
   const [err, seterr] = useState<boolean>(false);
   let { register, handleSubmit } = useForm();
@@ -27,7 +27,7 @@ function Login() {
           seterr(true);
         });
     } catch (error) {
-      console.log(error," ____Login.tsx");
+      console.log(error, " ____Login.tsx");
       seterr(true);
     }
   };

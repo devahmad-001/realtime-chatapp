@@ -14,6 +14,8 @@ export default function Messages() {
     const unsub = onSnapshot(doc(db, "chats", data.chatID), (doc) => {
       // @ts-ignore
       doc.exists() && setmessages(doc.data().messages);
+    //  console.log(doc.data().messages);
+           
     });
     return () => {
       unsub();

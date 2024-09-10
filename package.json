@@ -24,6 +24,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.0",
+    "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.24.0",
     "styled-components": "^6.1.11",
     "uploadthing": "^6.12.0",

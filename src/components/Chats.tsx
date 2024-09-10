@@ -44,7 +44,7 @@ export default function Chats() {
   useEffect(() => {
     const getChats = () => {
       const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
-        // console.log("Searched Chat data __Chats.tsx: ", doc.data());
+        console.log("Searched Chat data __Chats.tsx: ", doc.data());
         // @ts-ignore
         setchats(doc.data());
         return () => {

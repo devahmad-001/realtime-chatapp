@@ -1,6 +1,6 @@
 "use client";
 import styled from "@emotion/styled";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Picker, { Emoji } from "emoji-picker-react";
 import { AuthContext } from "./Context/AuthContext";
 import { ChatContext } from "./Context/ChatContext";
@@ -70,6 +70,8 @@ export default function Input() {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
   const [err, setErr] = useState(false);
+  const [clockformat, setclockFormat] = useState("");
+  const [timeAgo, setTimeAgo] = useState("");
   const { currentUser }: any = useContext(AuthContext);
   const { data }: any = useContext(ChatContext);
 
@@ -150,6 +152,7 @@ export default function Input() {
       await updateDoc(docRefConnectedUser, {
         [data.chatID + ".lastMessage"]: {
           text,
+          time: new Date(),
         },
         [data.chatID + ".date"]: serverTimestamp(),
       });
@@ -161,7 +164,13 @@ export default function Input() {
     setImg(null);
     setText("");
     setInputStr("");
+    time();
   };
+
+  const handleKey = (key: any) => {
+    key.code === "Enter" && handleSend();
+  };
+
 
   return (
     <InputBox>
@@ -170,6 +179,7 @@ export default function Input() {
           className="Input"
           value={inputStr}
           onChange={handleChange}
+          onKeyDown={handleKey}
           placeholder="Type something..."
         />
       </TextFeild>

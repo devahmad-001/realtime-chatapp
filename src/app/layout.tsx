@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthContextProvider } from "@/components/Context/AuthProvider";
 import { ChatContextProvider } from "@/components/Context/ChatProvider";
-
+import toast, { Toaster } from 'react-hot-toast';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+      <Toaster position="top-right" />
         <AuthContextProvider>
           <ChatContextProvider>{children}</ChatContextProvider>
         </AuthContextProvider>
